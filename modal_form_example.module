@@ -1,0 +1,46 @@
+<?php
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\CloseModalDialogCommand;
+use Drupal\Core\Ajax\RedirectCommand;
+
+/**
+ * Implements hook_help().
+ */
+function modal_form_example_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the modal_form_example module.
+    case 'help.page.modal_form_example':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Display a form in a modal window using the Drupal Ajax API') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function modal_form_example_form_node_article_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['actions']['submit']['#submit'][] = '_modal_form_example_ajax_submit';
+  $form['actions']['submit']['#attributes']['class'][] = 'use-ajax-submit';
+}
+
+/**
+ * Close the Modal and redirect the user to the homepage.
+ *
+ * @param array $form
+ *   The form that will be altered.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   FormState Object.
+ */
+function _modal_form_example_ajax_submit(array $form, FormStateInterface &$form_state) {
+  $response = new AjaxResponse();
+  $response->addCommand(new CloseModalDialogCommand());
+  $response->addCommand(new RedirectCommand('/'));
+  $form_state->setResponse($response);
+}

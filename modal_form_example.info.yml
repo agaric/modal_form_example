@@ -1,0 +1,5 @@
+name: Modal Form Example
+type: module
+description: Display a form in a modal window using the Drupal Ajax API
+core: 8.x
+package: Custom
